@@ -1,5 +1,6 @@
 package me.kongyl.gcjjava.runner;
 
+import org.gdal.gdal.gdal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -24,6 +25,10 @@ public class GcjRunner implements CommandLineRunner {
         // gcj2wgs
         double[] wgs = GcjUtils.gcj2wgs(lng, lat);
         logger.info(String.format("gcj2wgs: lng: %.10f, lat: %.10f", wgs[0], wgs[1]));
+
+        double x = 12946773.458720237;
+        double y = 4851931.6540772095;
+        gdal.AllRegister();
 
         logger.info("complete");
     }
