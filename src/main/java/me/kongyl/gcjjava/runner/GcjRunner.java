@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import me.kongyl.gcjjava.util.GcjUtils;
+import me.kongyl.gcjjava.util.TransUtils;
 
 @Component
 public class GcjRunner implements CommandLineRunner {
@@ -28,7 +29,21 @@ public class GcjRunner implements CommandLineRunner {
 
         double x = 12946773.458720237;
         double y = 4851931.6540772095;
+        logger.info(String.format("origin: x: %.10f, y: %.10f", x, y));
         gdal.AllRegister();
+        double[] transOri = TransUtils.geoTrans(3857, 4326, x, y);
+        // gdal version 3+ use north east axis
+        double[] lngLat = new double[] { transOri[1], transOri[0] };        
+        
+        // wgs2gcj
+        double[] gcjLngLat = GcjUtils.wgs2gcj(lngLat[0], lngLat[1]);
+        double[] gcjXY = TransUtils.geoTrans(4326, 3857, gcjLngLat[1], gcjLngLat[0]);
+        logger.info(String.format("wgs2gcj: x: %.10f, y: %.10f", gcjXY[0], gcjXY[1]));
+
+        // gcj2wgs
+        double[] wgsLngLat = GcjUtils.gcj2wgs(lngLat[0], lngLat[1]);
+        double[] wgsjXY = TransUtils.geoTrans(4326, 3857, wgsLngLat[1], wgsLngLat[0]);
+        logger.info(String.format("gcj2wgs: x: %.10f, y: %.10f", wgsjXY[0], wgsjXY[1]));
 
         logger.info("complete");
     }
